@@ -1,0 +1,74 @@
+version: '3'
+services:
+  post:
+    build:
+      context: ./post
+    depends_on:
+      - mongo
+      - minio
+    environment:
+      - MONGODB_URI=mongodb://mongo/posts
+      - PORT=3000
+      - JWT_EXPIRY=60m
+      - JWT_SECRET=secret
+      - COOKIE_SECRET=secret
+      - AUTH_COOKIE_NAME=token
+      - MINIO_ENDPOINT=minio
+      - MINIO_PORT=9000
+      - MINIO_ACCESS_KEY=inf0Nf2Rt2TWjmQ6RIuD
+      - MINIO_SECRET_KEY=6oyHHjN8YKE946K2NDiohf81qtSMySgxZMpggt9v
+    networks:
+      - app-net
+
+  auth:
+    build:
+      context: ./auth
+    depends_on:
+      - mongo
+      - minio
+    environment:
+      - MONGODB_URI=mongodb://mongo/users
+      - PORT=3000
+      - JWT_EXPIRY=60m
+      - JWT_SECRET=secret
+      - COOKIE_SECRET=secret
+      - AUTH_COOKIE_NAME=token
+      - MINIO_ENDPOINT=minio
+      - MINIO_PORT=9000
+      - MINIO_ACCESS_KEY=inf0Nf2Rt2TWjmQ6RIuD
+      - MINIO_SECRET_KEY=6oyHHjN8YKE946K2NDiohf81qtSMySgxZmpggt9v
+    networks:
+      - app-net
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - '27017:27017'
+    networks:
+      - app-net
+
+  minio:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+    environment:
+      - MINIO_ACCESS_KEY=inf0Nf2Rt2TWjmQ6RIuD
+      - MINIO_SECRET_KEY=6oyHHjN8YKE946K2NDiohf81qtSMySgxZmpggt9v
+      - MINIO_ROOT_USER=inf0Nf2Rt2TWjmQ6RIuD
+      - MINIO_ROOT_PASSWORD=6oyHHjN8YKE946K2NDiohf81qtSMySgxZmpggt9v
+    networks:
+      - app-net
+
+  nginx:
+    build:
+      context: ./nginx
+    ports:
+      - '80:80'
+    networks:
+      - app-net
+    depends_on:
+      - post
+      - auth
+
+networks:
+  app-net:
