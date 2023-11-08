@@ -10,14 +10,13 @@ import notificationRouter from "./routes/notificationRouter.js";
 import notFoundHandler from "./middlewares/common/notFoundHandler.js";
 import defaultErrorHandler from "./middlewares/common/defaultErrorHandler.js";
 
-
 const app = express();
 
 app.use(
-    cors({
-        origin: "*",
-        credentials: true,
-    })
+  cors({
+    origin: "*",
+    credentials: true,
+  })
 );
 
 app.use(express.json());
@@ -26,7 +25,7 @@ app.use(cookieParser(config.cookie.secret));
 
 mongoose.set("strictQuery", false);
 mongoose.connect(config.mongodb.uri).then(() => {
-    console.log("Successfully connected to MongoDB...");
+  console.log("Successfully connected to MongoDB...");
 });
 
 app.use("/auth", authRouter);
@@ -36,6 +35,6 @@ app.use("/notification", notificationRouter);
 app.use(notFoundHandler);
 app.use(defaultErrorHandler);
 
-app.listen(config.port, () => {
-    console.log(`Server listening on port ${config.port}...`);
+app.listen(3000, () => {
+  console.log(`Server listening on port 3000...`);
 });
